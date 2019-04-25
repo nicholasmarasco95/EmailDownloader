@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project-private xmlns="http://www.netbeans.org/ns/project-private/1">
+    <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="123">
+        <file>
+            <url>src/emaildownloader/MergeEmails.java</url>
+            <bookmark id="91">
+                <name/>
+                <line>171</line>
+                <key/>
+            </bookmark>
+            <bookmark id="92">
+                <name/>
+                <line>177</line>
+                <key/>
+            </bookmark>
+            <bookmark id="90">
+                <name/>
+                <line>203</line>
+                <key/>
+            </bookmark>
+            <bookmark id="76">
+                <name/>
+                <line>278</line>
+                <key/>
+            </bookmark>
+            <bookmark id="75">
+                <name/>
+                <line>315</line>
+                <key/>
+            </bookmark>
+            <bookmark id="77">
+                <name/>
+                <line>319</line>
+                <key/>
+            </bookmark>
+        </file>
+        <file>
+            <url>src/emaildownloader/EmailExtractor.java</url>
+            <bookmark id="88">
+                <name/>
+                <line>117</line>
+                <key/>
+            </bookmark>
+            <bookmark id="95">
+                <name/>
+                <line>123</line>
+                <key/>
+            </bookmark>
+        </file>
+    </editor-bookmarks>
+    <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
+        <group>
+            <file>file:/C:/Users/nicho/OneDrive/Software/NetBeans%20OneDrive/Mailing%20List%20Creator/EmailDownloader/src/emaildownloader/RunningBlink.java</file>
+            <file>file:/C:/Users/nicho/OneDrive/Software/NetBeans%20OneDrive/Mailing%20List%20Creator/EmailDownloader/src/emaildownloader/AlboAvvocatiRoma.java</file>
+            <file>file:/C:/Users/nicho/OneDrive/Software/NetBeans%20OneDrive/Mailing%20List%20Creator/EmailDownloader/src/emaildownloader/ConsiglioNazionaleNotai.java</file>
+            <file>file:/C:/Users/nicho/OneDrive/Software/NetBeans%20OneDrive/Mailing%20List%20Creator/EmailDownloader/src/emaildownloader/PagineGialle.java</file>
+            <file>file:/C:/Users/nicho/OneDrive/Software/NetBeans%20OneDrive/Mailing%20List%20Creator/EmailDownloader/src/emaildownloader/EmailDownloaderGUI.java</file>
+        </group>
+    </open-files>
+</project-private>
