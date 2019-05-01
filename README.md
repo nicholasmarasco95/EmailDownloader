@@ -84,3 +84,26 @@ This feature was created to extract emails to send to manage Mail Chimp free sub
 "Unsubscribed" and "Sent" are not required.
 User can filter email by "City", "Group".
 **Email Number** is required.
+
+
+# Code Guide
+In this guide will be explained some method used.
+
+## Autostart
+
+To make Email Downloader start automatically after Windows Login, is necessary to create a link and copy it into startup folder. To do this create shortcut JShellLink project was used.
+**System.getProperty("user.name")** get Windows user name, this will be used to build startup folder path.
+
+```java
+private void shortcutAutostartAdd(){
+        JShellLink link= new JShellLink();
+        String jarName= "EmailDownloader.jar";
+        String filePath= System.getProperty("user.dir")+"\\" + jarName;
+        String windowsUser= System.getProperty("user.name");
+        String startupFolder= "C:\\Users\\" + windowsUser + "\\AppData\\Roaming\\Microsoft\\Windows\\Start Menu\\Programs\\Startup";
+        link.setFolder(startupFolder);
+        link.setName(jarName);
+        link.setPath(filePath);
+        link.save();
+    }
+```
