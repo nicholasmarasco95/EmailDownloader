@@ -1,5 +1,5 @@
 # Email Downloader
-Email Downloader is software to get email from web. It works with Chromium Driver. 
+Email Downloader is software to get emails from web. It works with Chromium Driver. 
 Some features were created to manage Mail Chimp service.
 
 ## FYI
@@ -18,7 +18,7 @@ To close application user must click on Exit button. X button is used to reduce 
 
 **Dest Folder**
 
-Here User can choose Destination Folder where a CSV file will be created. In that file will be written email downloaded.
+Here User can choose Destination Folder where a CSV file will be created. In that file there will be emails downloaded.
 
 **Driver Folder**
 
@@ -30,7 +30,7 @@ This feature allows Chromium to start in background, this means that no Chrome w
 
 **Auto Start**
 
-If enabled, Email Downloader will copy a shortcut to startup folder. This allows the software to automatically startup after Windows Login.
+If enabled, Email Downloader will copy a shortcut to startup folder. This allows the software to automatically startup after Windows Login. This feature works in Windows environment only. The software checks the environment every time it starts, if it detects another OS, it will deactivate this function.
 
 **Start minimized**
 
@@ -112,7 +112,7 @@ if(service.equals("Ordine Commercialisti Roma")){
 
 ## Autostart
 
-To make Email Downloader start automatically after Windows Login, is necessary to create a link and copy it into startup folder. To do this create shortcut JShellLink project was used.
+To make Email Downloader start automatically after Windows Login, is necessary to create a link and copy it into startup folder. To do this JShellLink project was used.
 **System.getProperty("user.name")** get Windows user name, this will be used to build startup folder path.
 
 ```java
@@ -316,5 +316,171 @@ private void parseAlboNames(){
             arrayLinks[i]= it.next();
             i++;
         }
+    }
+```
+
+### Parse Users Pages
+Once current search page's links were retrieved, this method will iterate the array to visit results pages. If page contains an email address, the software will parse other information (e.g. name, address, city, phone), then a csv string will be created, it will be added to a list ("listUser"), and the home Text Area will be updated with new results. Finally, the method will navigate back to the search page.
+
+```java
+private void parseUsersPages(){
+        String strToFindFirmName= "\"name\" :";
+        String strToFindEmail= "\"email\" :";
+        String strToFindAddress= "\"streetAddress\" :";
+        String strToFindPhone= "\"telephone\" :";
+        String strToFindCity= "addressLocality\" : ";
+        String strToFindRegion= "addressRegion\" : ";
+        String firmName= ""; 
+        String email= "";
+        String address= "";
+        String phone= "";
+        String strUser= "";
+        String city="";
+        String tmpRegion= "";
+        int indexStart= 0;
+        int indexEnd= 0;
+        for(int i=0; i<this.arrayLinks.length; i++){
+            nextUserPage(this.arrayLinks[i]);
+            indexStart= this.htmlUserPageStr.indexOf(strToFindFirmName);
+            if(indexStart>0){
+                indexStart= this.htmlUserPageStr.indexOf("\"",indexStart+strToFindFirmName.length());
+                indexEnd= this.htmlUserPageStr.indexOf(",", indexStart);
+                firmName= this.htmlUserPageStr.substring(indexStart, indexEnd);
+                firmName= firmName.replaceAll("\"", "");
+                firmName= firmName.trim();
+            }else{
+                firmName="";
+            }
+            indexStart= this.htmlUserPageStr.indexOf(strToFindEmail);
+            if(indexStart>0){
+                indexStart= this.htmlUserPageStr.indexOf("\"",indexStart+strToFindEmail.length());
+                indexEnd= this.htmlUserPageStr.indexOf(",", indexStart);
+                email= this.htmlUserPageStr.substring(indexStart, indexEnd);
+                email= email.replaceAll("\"", "");
+                email= email.trim();
+            }else{
+                email="";
+            }
+            indexStart= this.htmlUserPageStr.indexOf(strToFindAddress);
+            if(indexStart>0){
+                indexStart= this.htmlUserPageStr.indexOf("\"",indexStart+strToFindAddress.length());
+                indexEnd= this.htmlUserPageStr.indexOf(",", indexStart);
+                address= this.htmlUserPageStr.substring(indexStart, indexEnd);
+                address= address.replaceAll("\"", "");
+                address= address.trim();
+            }else{
+                address="";
+            }
+            indexStart= this.htmlUserPageStr.indexOf(strToFindPhone);
+            if(indexStart>0){
+                indexStart= this.htmlUserPageStr.indexOf("\"",indexStart+strToFindPhone.length());
+                indexEnd= this.htmlUserPageStr.indexOf("}", indexStart);
+                phone= this.htmlUserPageStr.substring(indexStart, indexEnd);
+                phone= phone.replaceAll("\"", "");
+                phone= phone.replaceAll("\\+39", "");
+                phone= phone.replaceAll(" ", "");
+                phone= phone.trim();
+            }else{
+                phone="";
+            }
+            indexStart= this.htmlUserPageStr.indexOf(strToFindCity);
+            if(indexStart>0){
+                indexStart+=strToFindCity.length();
+                indexEnd= this.htmlUserPageStr.indexOf(",", indexStart);
+                city= this.htmlUserPageStr.substring(indexStart, indexEnd);
+                city= city.replaceAll("\"", "");
+                city= city.trim();
+                indexStart= this.htmlUserPageStr.indexOf(strToFindRegion);
+                if(indexStart>0){
+                    indexEnd= this.htmlUserPageStr.indexOf(",", indexStart);
+                    indexStart= indexStart+strToFindRegion.length();
+                    tmpRegion= this.htmlUserPageStr.substring(indexStart, indexEnd);
+                    tmpRegion= tmpRegion.replaceAll("\"", "");
+                    tmpRegion= tmpRegion.trim();
+                    city= city + " " + tmpRegion;
+                }
+            }else{
+                city="";
+            }
+            if(firmName.length()!=0 && email.length()!=0){
+                strUser= firmName + "," + "," + "," + keywordSearch + "," + email + "," + city + "," + address + "," + phone + ",";
+                strUser= strUser.toLowerCase();
+                listUser.add(strUser);
+                this.emailNumber++;
+                this.labelEmailsNumber.setText(Integer.toString(this.emailNumber));
+                this.txtAreaEmail.append(strUser+"\n");
+                //System.out.println(strUser);
+            }
+
+            backToSearchPage();
+        }
+    }
+```
+
+### Write File
+After parsing users pages, the software will write on csv file the results written on "listUser", then it will overwrite the list to clear it.
+
+```java
+private void writeFile(){
+        String destPath= settings.getStringValue("destDir");
+        destPath= destPath+"\\"+this.fileWriteName;
+        File fileCheck= new File(destPath);
+        boolean newFile= false;
+        try {
+            if(!fileCheck.exists()){
+                newFile= true;
+            }
+            FileWriter fw= new FileWriter(destPath, true);
+            BufferedWriter bw = new BufferedWriter(fw);
+            PrintWriter out = new PrintWriter(bw);
+            if(newFile){
+                out.println("Firm Name,Last Name,First Name,Group,Email,City,Address,Phone,Website");
+            }
+            Iterator<String> it= this.listUser.iterator();
+            while(it.hasNext()){
+                out.println(it.next());
+            }
+            this.listUser= new LinkedList();
+            out.close();
+        }catch (IOException ex) {
+            Logger.getLogger(OrdineCommercialistiRoma.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        
+        writeCheckFile();
+    }
+```
+
+### Write Check File
+Once the result's file was updated, checkfile will be updated. It will update the number of email retrieved in this session and the number of current page. This will be read in future sessions to continue retrieving new emails without restarting from beginning.
+
+```java
+private void writeCheckFile(){
+        String destPath= settings.getStringValue("destDir");
+        destPath= destPath+"\\"+this.fileCheckName;
+        FileWriter fw;
+        try {
+            fw = new FileWriter(destPath, false);
+            BufferedWriter bw = new BufferedWriter(fw);
+            PrintWriter out = new PrintWriter(bw);
+            out.println("Pagine Gialle - " + this.keywordSearch + " - " + this.city);
+            out.println("Email Number:\t" + this.emailNumber);
+            out.println("Page Number:\t" + this.currentPageNumber);
+            out.close();
+        } catch (IOException ex) {
+            Logger.getLogger(AlboAvvocatiRoma.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+```
+
+### Next Search Page
+This method will navigate to the next search page. Then a new cycle will be started.
+
+```java
+private void nextSearchPage(){
+        this.currentPageNumber+=1;
+        this.searchPageUrl= this.searchPageOriginalUrl+ keywordSearch + "/Roma" + "/p-" + currentPageNumber;
+        driver.get(searchPageUrl);
+        String handle= driver.getWindowHandle();
+        driver.switchTo().window(handle);
     }
 ```
