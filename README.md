@@ -13,6 +13,7 @@ Email Downloader supports Windows, it was tested on Windows 10.0.17134. If the s
 * Selenium Web Driver to browse web
 * JShellLink to create autostart link
 * Chrome driver used by selenium
+
 In **Email Downloader JAR** folder user will find a .jar file to run application, a lib folder and a "chromedriver.exe" file that is the driver used by app. User must specify path of driver in GUI.
 
 
