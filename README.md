@@ -1,10 +1,19 @@
 # Email Downloader
-Email Downloader is software to get emails from web. It works with Chromium Driver. 
+Email Downloader is software to get emails from web.
 Some features were created to manage Mail Chimp service.
 
 ## FYI
 
 This project was created for educational purpose only. Please don't use this software to commit any illegal actions.
+
+## Supported OS
+Email Downloader supports Windows, it was tested on Windows 10.0.17134. If the software detects other OS, it will show an error message and shutdown.
+
+## Dependencies
+* Selenium Web Driver to browse web
+* JShellLink to create autostart link
+* Chrome driver used by selenium
+In **Email Downloader JAR** folder user will find a .jar file to run application, a lib folder and a "chromedriver.exe" file that is the driver used by app. User must specify path of driver in GUI.
 
 
 # User Guide
@@ -30,7 +39,7 @@ This feature allows Chromium to start in background, this means that no Chrome w
 
 **Auto Start**
 
-If enabled, Email Downloader will copy a shortcut to startup folder. This allows the software to automatically startup after Windows Login. This feature works in Windows environment only. The software checks the environment every time it starts, if it detects another OS, it will deactivate this function.
+If enabled, Email Downloader will copy a shortcut to startup folder. This allows the software to automatically startup after Windows Login.
 
 **Start minimized**
 

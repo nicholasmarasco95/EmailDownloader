@@ -37,17 +37,16 @@ public class EmailDownloaderGUI extends javax.swing.JFrame {
      */
     private Settings settings;
     private static boolean visible;
-    private boolean isWindows;
     
     public EmailDownloaderGUI() {
         this.setTitle("Email Downloader");
         this.settings= new Settings();
+        checkWindows();
         if(settings.getBoolValue("startMin")) visible=false;
         else visible= true;
         initComponents();
         this.settings.SaveSetting("boolean", "emailStopped", "false");
         this.btnStop.setEnabled(false);
-        this.isWindows= checkWindows();
         SystemTrayMethod();
         refresh();
         if(settings.getBoolValue("autostartEmail")) autoStart();
@@ -72,13 +71,7 @@ public class EmailDownloaderGUI extends javax.swing.JFrame {
         }
         if(settings.getBoolValue("headlessChrome")) checkBoxHeadless.setSelected(true);
         else checkBoxHeadless.setSelected(false);
-        if(!this.isWindows){
-            checkAutoStart.setEnabled(false);
-            settings.SaveSetting("boolean", "autostartEmail", "false");
-            checkAutoStart.setSelected(false);
-        }else{
-            checkAutoStart.setEnabled(true);
-            if(settings.getBoolValue("autostartEmail")){
+        if(settings.getBoolValue("autostartEmail")){
             if(!settings.getStringValue("srvLastChoice").equals("aar") && !settings.getStringValue("srvLastChoice").equals("pg")){
                 JOptionPane.showMessageDialog(this, "Autostart not available for this service\nLast choice was: " + settings.getStringValue("srvLastChoice"), "Error", JOptionPane.ERROR_MESSAGE);
                 settings.SaveSetting("boolean", "autostartEmail", "false");
@@ -87,11 +80,10 @@ public class EmailDownloaderGUI extends javax.swing.JFrame {
                 checkAutoStart.setSelected(true);
                 shortcutAutostartAdd();
             }
-            }
-            else{
-                checkAutoStart.setSelected(false);
-                shortcutAutostartRemove();
-            }
+        }
+        else{
+            checkAutoStart.setSelected(false);
+            shortcutAutostartRemove();
         }
         if(settings.getBoolValue("startMin")) checkStrMin.setSelected(true);
         else checkStrMin.setSelected(false);
@@ -139,8 +131,11 @@ public class EmailDownloaderGUI extends javax.swing.JFrame {
         }
     }
     
-    private boolean checkWindows(){
-        return (System.getProperty("os.name").toLowerCase().contains("windows"));
+    private void checkWindows(){
+        if(!(System.getProperty("os.name").toLowerCase().contains("windows"))){
+            JOptionPane.showMessageDialog(this, "Email Downloader supports Windows environment only", "Not Supported OS", JOptionPane.ERROR_MESSAGE);
+            System.exit(0);
+        }
     }
     
     private void shortcutAutostartAdd(){
